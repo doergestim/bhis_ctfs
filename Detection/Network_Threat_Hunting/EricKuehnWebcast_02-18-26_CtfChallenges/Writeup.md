@@ -39,12 +39,12 @@ PY
 ## Step 2 — Build the per-event “pair” value
 
 **Transformation rule** (per selected event)
-- `unit` → zero-padded 2 digits  
-- last octet of `id.resp_h` → zero-padded 2 digits  
+- `unit` -> zero-padded 2 digits  
+- last octet of `id.resp_h` -> zero-padded 2 digits  
 - concatenate as `UNIT+OCTET` (no separator)
 
 Example:
-- `unit=32`, `id.resp_h=10.47.8.51` → `3251`
+- `unit=32`, `id.resp_h=10.47.8.51` -> `3251`
 
 ---
 
