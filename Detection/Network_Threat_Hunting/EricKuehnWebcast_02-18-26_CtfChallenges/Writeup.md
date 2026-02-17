@@ -12,6 +12,10 @@ Derive the ZIP password from `modbus.json` telemetry metadata and recover `flag.
 
 ---
 
+## What we get from Notes.txt
+
+`Notes.txt` contains SOC analyst handoff notes that act as indirect hints rather than explicit instructions. The notes confirm that the suspicious activity is tied to the unusual Modbus function code in the low-30 range, indicate that only metadata (not payloads) is needed, and suggest that values must be **paired per transaction**, normalized to a **consistent width**, and then hashed to produce an access token. The reference to “the same algorithm Git usually uses” subtly points toward **SHA-1**, while mentions of Base32 and trimming padding guide the encoding step.
+
 ## Step 1 - Filter the telemetry (unknown-34 REQ only)
 
 **Filter criteria**
@@ -103,7 +107,30 @@ Format: `timestamp | unit | id.resp_h | pair`
 
 ---
 
-## Step 4 - Concatenate all pairs into the payload string `S`
+## Step 4 - Concatenate all pairs into the payload string `S`:
+
+```bash
+python3 - << 'PY'
+import json
+
+events = []
+
+with open("modbus.json","r",encoding="utf-8") as f:
+    for line in f:
+        j = json.loads(line)
+        if j.get("func")=="unknown-34" and j.get("pdu_type")=="REQ":
+            events.append(j)
+
+events.sort(key=lambda x: x["ts"])
+
+payload = "".join(
+    f"{int(j['unit']):02d}{int(j['id.resp_h'].split('.')[-1]):02d}"
+    for j in events
+)
+
+print(payload)
+PY
+```
 
 ### Full `S`
 ```
@@ -118,11 +145,25 @@ Format: `timestamp | unit | id.resp_h | pair`
 
 ### Full values
 **SHA-1 hex digest**
+
+```bash
+printf "%s" "325132523253325132523253325132523253325132523253325132523253325132523253325132523253325132523253325132523253325132523253325132523253325132523253325132523253325132523253325132523253" | sha1sum
+```
+
 ```
 3c0db3660cd0f125e8adb3aa845c4e2a43ce5153
 ```
 
 **Base32 (unpadded)**
+
+```bash
+echo "3c0db3660cd0f125e8adb3aa845c4e2a43ce5153" \
+| xxd -r -p \
+| base32 \
+| tr -d '=' \
+| tr -d '\n'
+```
+
 ```
 HQG3GZQM2DYSL2FNWOVIIXCOFJB44UKT
 ```
@@ -141,7 +182,9 @@ HQG3GZQM2DYSL2FNWOVI
 unzip maintenance.zip
 # when prompted for password:
 # HQG3GZQM2DYSL2FNWOVI
+```
 
+```bash
 cat flag.txt
 ```
 
