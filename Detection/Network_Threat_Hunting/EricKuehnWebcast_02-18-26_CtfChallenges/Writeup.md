@@ -8,6 +8,7 @@ Derive the ZIP password from `modbus.json` telemetry metadata and recover `flag.
 ## Files
 - `modbus.json`
 - `maintenance.zip`
+- `Notes.txt`
 
 ---
 
