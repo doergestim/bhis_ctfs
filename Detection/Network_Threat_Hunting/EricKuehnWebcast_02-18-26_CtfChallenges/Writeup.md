@@ -1,4 +1,4 @@
-# Shadow Maintenance — Write-up
+# Shadow Maintenance - Write-up
 
 ## Goal
 Derive the ZIP password from `modbus.json` telemetry metadata and recover `flag.txt` from `maintenance.zip`.
@@ -11,7 +11,7 @@ Derive the ZIP password from `modbus.json` telemetry metadata and recover `flag.
 
 ---
 
-## Step 1 — Filter the telemetry (unknown-34 REQ only)
+## Step 1 - Filter the telemetry (unknown-34 REQ only)
 
 **Filter criteria**
 Select only records where:
@@ -36,7 +36,7 @@ PY
 
 ---
 
-## Step 2 — Build the per-event “pair” value
+## Step 2 - Build the per-event “pair” value
 
 **Transformation rule** (per selected event)
 - `unit` -> zero-padded 2 digits  
@@ -48,7 +48,7 @@ Example:
 
 ---
 
-## Step 3 — Ordered values (full)
+## Step 3 - Ordered values (full)
 
 Format: `timestamp | unit | id.resp_h | pair`
 
@@ -102,7 +102,7 @@ Format: `timestamp | unit | id.resp_h | pair`
 
 ---
 
-## Step 4 — Concatenate all pairs into the payload string `S`
+## Step 4 - Concatenate all pairs into the payload string `S`
 
 ### Full `S`
 ```
@@ -111,7 +111,7 @@ Format: `timestamp | unit | id.resp_h | pair`
 
 ---
 
-## Step 5 — Hash and encode to get the ZIP password
+## Step 5 - Hash and encode to get the ZIP password
 
 **Algorithm:** `SHA-1 -> Base32 -> strip '=' -> first 20 characters`
 
@@ -133,7 +133,7 @@ HQG3GZQM2DYSL2FNWOVI
 
 ---
 
-## Step 6 — Extract the archive and read the flag
+## Step 6 - Extract the archive and read the flag
 
 ### Commands
 ```bash
