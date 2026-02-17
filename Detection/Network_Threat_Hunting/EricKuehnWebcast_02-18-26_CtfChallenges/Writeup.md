@@ -151,9 +151,10 @@ MetaCTF{b50Ke_iN70_Mo4Bu5}
 
 ---
 
-## Reference solver script (copy/paste)
+## Reference solver script (copy/paste into terminal)
 
-```python
+```bash
+python3 - << 'PY'
 import json
 import hashlib
 import base64
@@ -197,6 +198,7 @@ print("Payload string S:")
 print(S)
 print("\nZIP password:")
 print(password)
+PY
 ```
 
 ---
